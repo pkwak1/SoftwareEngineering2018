@@ -4,20 +4,23 @@ import java.util.Random;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class ChipsMap {
 	Random rand = new Random();
+	public ObservableList<Node> root;
 	boolean[][] chipsGrid = new boolean[25][25];
 	final int dimensions = 25;
 	private static ChipsMap chipsMap;
+	Player player;
+	public int chipCount;
 	
-	ImageView shipImageView = new ImageView(); // TODO: Get grid on screen
+	// level instantiations
+	Portal portal;
+	Wall wall;
+	Stairs stairs;
 	
 	public static ChipsMap getInstance() {
         if (chipsMap == null) {
@@ -28,6 +31,7 @@ public class ChipsMap {
     }
 	
 	public void drawMap(ObservableList<Node> root, int scale) {
+		this.root = root;
 		for(int x = 0; x < dimensions; x++) {
 			for(int y = 0; y < dimensions; y++) {
 				Rectangle rect = new Rectangle(x * scale, y * scale, scale, scale);
@@ -46,6 +50,7 @@ public class ChipsMap {
 			}
 		}
 		
+		
 		/* possible to implement random walls and stuff
 		int islandCount = 0;		
 		while (islandCount < 10) {
@@ -62,9 +67,91 @@ public class ChipsMap {
 			}
 		}
 		*/
+		
+		// test for wall
+		
+		chipCount = 0;
 	}
 	
 	public boolean getMap(int x, int y) {
 		return chipsGrid[x][y];
+	}
+	
+	public void setMap(int x, int y, boolean isBound) {
+		chipsGrid[x][y] = isBound;
+	}
+	
+	public void addPlayer(Player player) {
+		this.player = player;
+	}
+	
+	public int getChipCount() { 
+		return chipCount;
+	}
+	
+	public Portal getPortal() {
+		return portal;
+	}
+	
+	public void level1(ObservableList<Node> root) {
+		System.out.println("level1 start!");
+		wall = new Wall(this, root);
+		wall.buildWall(0,0);
+		wall.buildWall(24,24);
+		
+		// Chips
+		Chips chip1 = new Chips(this, root);
+		chip1.placeChip(9, 10);
+		this.player.addObserver(chip1);
+		
+		// ChipsGate
+		ChipsGate chipsGate = new ChipsGate(this, root);
+		chipsGate.placeGate(23, 12);
+		wall.buildWall(24,11);
+		wall.buildWall(24,13);
+		wall.buildWall(23,11);
+		wall.buildWall(23,13);
+		this.player.addObserver(chipsGate);
+		
+		// Stairs
+		Stairs stairs = new Stairs(this, root);
+		stairs.placeStairs(20, 20);
+		this.player.addObserver(stairs);
+		
+		// Portal
+		Portal portal = new Portal(this, root);
+		portal.placePortal(24, 12);
+		this.player.addObserver(portal);
+	}
+	
+	public void level2(ObservableList<Node> root) {
+		System.out.println("level2 start!");
+		wall = new Wall(this, root);
+		wall.buildWall(0,0);
+		wall.buildWall(24,24);
+		
+		// Chips
+		Chips chip1 = new Chips(this, root);
+		chip1.placeChip(9, 10);
+		this.player.addObserver(chip1);
+		
+		// ChipsGate
+		ChipsGate chipsGate = new ChipsGate(this, root);
+		chipsGate.placeGate(23, 12);
+		wall.buildWall(24,11);
+		wall.buildWall(24,13);
+		wall.buildWall(23,11);
+		wall.buildWall(23,13);
+		this.player.addObserver(chipsGate);
+		
+		// Stairs
+		Stairs stairs = new Stairs(this, root);
+		stairs.placeStairs(1, 10);
+		this.player.addObserver(stairs);
+		
+		// Portal
+		Portal portal = new Portal(this, root);
+		portal.placePortal(24, 12);
+		this.player.addObserver(portal);
 	}
 }
